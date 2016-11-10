@@ -8,36 +8,39 @@
   <img src="assets/images/icons/diners-club.png" alt="diners-club">
 </div>
 <div class="input-group">
-  <label class="icon-label credit-card-label">
-    <span class="visually-hidden">Credit Card</span>
+  <label>
+    <span>Card number</span>
     {{input
-      type="text"
-      class="icon-input"
       disabled=cannotDonate
-      placeholder="Card number"}}
+      type="text"
+      value=cardNumber}}
   </label>
 </div>
 
 <div class="input-group">
   <div class="row">
-    <label class="icon-label calendar-label">
-      <span class="visually-hidden">Expiration Date</span>
-      {{input
-        type="text"
-        class="icon-input"
-        disabled=cannotDonate
-        placeholder="MM / YY"}}
+    <label>
+      <span>Expiration date</span>
+      <select onchange={{action (mut month) value="target.value"}}>
+        {{#each months as |monthChoice|}}
+          <option value={{monthChoice}} selected={{eq month monthChoice}}>{{monthChoice}}</option>
+        {{/each}}
+      </select>
+      <select onchange={{action (mut year) value="target.value"}}>
+        {{#each years as |yearChoice|}}
+          <option value={{yearChoice}} selected={{eq year yearChoice}}>{{yearChoice}}</option>
+        {{/each}}
+      </select>
     </label>
 
-    <label class="icon-label lock-label">
-      <span class="visually-hidden">CVC</span>
+    <label>
+      <span>CVC</span>
       {{input
         type="text"
-        class="icon-input"
-        disabled=cannotDonate
-        placeholder="CVC"}}
+        value=cvc
+        disabled=cannotDonate}}
     </label>
   </div>
 </div>
 
-<button class="button default">Donate</button>
+<button class="button {{if canSubmit "default" "clear"}}" disabled={{cannotSubmit}}>Donate</button>
