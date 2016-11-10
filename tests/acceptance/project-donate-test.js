@@ -1,6 +1,8 @@
 import { test } from 'qunit';
 import moduleForAcceptance from 'code-corps-ember/tests/helpers/module-for-acceptance';
 import Ember from 'ember';
+import Mirage from 'ember-cli-mirage';
+
 import { authenticateSession } from 'code-corps-ember/tests/helpers/ember-simple-auth';
 import createOrganizationWithSluggedRoute from 'code-corps-ember/tests/helpers/mirage/create-organization-with-slugged-route';
 import projectDonatePage from '../pages/project/donate';
@@ -59,7 +61,7 @@ test('It requires authentication', function(assert) {
 });
 
 test('Allows adding a card and donating (creating a subscription)', function(assert) {
-  assert.expect(3);
+  assert.expect(4);
 
   stubStripe(this, stripeMockSuccess);
 
@@ -92,15 +94,14 @@ test('Allows adding a card and donating (creating a subscription)', function(ass
     assert.ok(subscription, 'Subscription was created sucessfully.');
     assert.equal(subscription.userId, user.id, 'User was set to current user.');
     assert.equal(subscription.projectId, project.id, 'Project was set to current project.');
+    assert.equal(currentRouteName(), 'project.thankyou');
   });
 
   // TODO: Add assertions to check whatever needs to happen on success happens
 });
 
-// TODO: test handling validation errors error (showing on page)
-
 test('Shows stripe errors when creating card token fails', function(assert) {
-  assert.expect(1);
+  assert.expect(2);
 
   stubStripe(this, stripeMockFailure);
 
@@ -129,6 +130,56 @@ test('Shows stripe errors when creating card token fails', function(assert) {
 
   andThen(() => {
     assert.notOk(server.schema.stripeSubscriptions.findBy({ amount: 1000 }), 'Subscription was not created.');
-    // TODO: Further test errors are displayed
+    assert.equal(currentRouteName(), 'project.donate');
+    // TODO: Assert errors are visible
   });
 });
+
+test('Shows validation errors when creating subscription fails', function(assert) {
+  assert.expect(2);
+
+  stubStripe(this, stripeMockSuccess);
+
+  let user = server.create('user');
+  authenticateSession(this.application, { 'user_id': user.id });
+
+  let organization = createOrganizationWithSluggedRoute();
+  let project = server.create('project', { organization });
+
+  projectDonatePage.visit({
+    amount: 10,
+    organization: organization.slug,
+    project: project.slug
+  });
+
+  andThen(() => {
+    projectDonatePage.creditCard.cardNumber('4242-4242-4242-4242');
+    projectDonatePage.creditCard.cardCVC('123');
+    projectDonatePage.creditCard.cardMonth('12');
+    projectDonatePage.creditCard.cardYear('2020');
+  });
+
+  andThen(() => {
+    let done = assert.async();
+
+    server.post('/stripe-subscriptions', function() {
+      done();
+      return new Mirage.Response(422, {}, {
+        errors: [ {
+          id: 'VALIDATION_ERROR',
+          source: { pointer: 'data/attributes/amount' },
+          detail: "can't be blank",
+          status: 422
+        } ]
+      });
+    });
+    projectDonatePage.creditCard.clickSubmit();
+  });
+
+  andThen(() => {
+    assert.notOk(server.schema.stripeSubscriptions.findBy({ amount: 1000 }), 'Subscription was not created.');
+    assert.equal(currentRouteName(), 'project.donate');
+    // TODO: Assert errors are visible
+  });
+});
+
