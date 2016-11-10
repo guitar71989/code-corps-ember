@@ -162,6 +162,8 @@ module.exports = function(environment) {
 
     ENV.sentry.development = true;
 
+    ENV.stripe.publishableKey = 'pk_test_hiQ7tWKKdLSw8jJdE98NSW74';
+
     ENV['simple-auth'] = {
       store: 'simple-auth-session-store:ephemeral'
     };
