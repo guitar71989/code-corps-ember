@@ -20,13 +20,13 @@
 <div class="input-group">
   <div class="row">
     <label>
-      <span>Expiration date</span>
-      <select onchange={{action (mut month) value="target.value"}}>
+      <span>Expiration</span>
+      <select class="month" onchange={{action (mut month) value="target.value"}}>
         {{#each months as |monthChoice|}}
           <option value={{monthChoice}} selected={{eq month monthChoice}}>{{monthChoice}}</option>
         {{/each}}
       </select>
-      <select onchange={{action (mut year) value="target.value"}}>
+      <select class="year" onchange={{action (mut year) value="target.value"}}>
         {{#each years as |yearChoice|}}
           <option value={{yearChoice}} selected={{eq year yearChoice}}>{{yearChoice}}</option>
         {{/each}}
@@ -34,7 +34,7 @@
     </label>
 
     <label>
-      <span>CVC</span>
+      <span>Security code</span>
       {{input
         type="text"
         value=cvc
