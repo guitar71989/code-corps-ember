@@ -1,2 +1,10 @@
 {{project-header project=model}}
-{{donation/donation-container donationAmount=amount projectTitle=model.title createCreditCardAndDonate=(action 'createCreditCardAndDonate' amount)}}
+{{#if subscription}}
+  Thank you for donating!
+{{else}}
+  {{donation/donation-container
+    createCreditCardAndDonate=(action 'createCreditCardAndDonate' amount)
+    donationAmount=amount
+    projectTitle=model.title
+  }}
+{{/if}}
