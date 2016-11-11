@@ -10,11 +10,7 @@
 <div class="input-group">
   <label>
     <span>Card number</span>
-    {{input
-      name="card-number"
-      disabled=cannotDonate
-      type="text"
-      value=cardNumber}}
+    {{input name="card-number" type="text" value=cardNumber}}
   </label>
 </div>
 
@@ -22,12 +18,12 @@
   <div class="row">
     <label>
       <span>Expiration</span>
-      <select class="month" disabled={{cannotDonate}} onchange={{action (mut month) value="target.value"}}>
+      <select class="month" onchange={{action (mut month) value="target.value"}}>
         {{#each months as |monthChoice|}}
           <option value={{monthChoice}} selected={{eq month monthChoice}}>{{monthChoice}}</option>
         {{/each}}
       </select>
-      <select class="year" disabled={{cannotDonate}} onchange={{action (mut year) value="target.value"}}>
+      <select class="year" onchange={{action (mut year) value="target.value"}}>
         {{#each years as |yearChoice|}}
           <option value={{yearChoice}} selected={{eq year yearChoice}}>{{yearChoice}}</option>
         {{/each}}
@@ -36,11 +32,7 @@
 
     <label>
       <span>Security code</span>
-      {{input
-        name="card-cvc"
-        type="text"
-        value=cvc
-        disabled=cannotDonate}}
+      {{input name="card-cvc" type="text" value=cvc}}
     </label>
   </div>
 </div>

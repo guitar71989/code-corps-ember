@@ -27,26 +27,6 @@ moduleForComponent('donation/credit-card', 'Integration | Component | donation/c
   }
 });
 
-test('inputs can be disabled', function(assert) {
-  assert.expect(1);
-
-  this.set('canDonate', false);
-
-  page.render(hbs`{{donation/credit-card canDonate=canDonate submit=submitHandler}}`);
-
-  assert.ok(page.allFieldDisabledStates.every((isDisabled) => isDisabled), 'All fields are disabled.');
-});
-
-test('inputs are enabled by default', function(assert) {
-  assert.expect(1);
-
-  this.set('canDonate', true);
-
-  page.render(hbs`{{donation/credit-card canDonate=canDonate submit=submitHandler}}`);
-
-  assert.ok(page.allFieldDisabledStates.every((isDisabled) => !isDisabled), 'All fields are enabled.');
-});
-
 test('it sends submit with credit card fields when button is clicked', function(assert) {
   assert.expect(2);
 

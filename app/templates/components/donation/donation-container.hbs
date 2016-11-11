@@ -6,16 +6,12 @@
 </div>
 
 <h3>Payment information</h3>
-<p>
-  {{#if projectTitle}}
-    Your payment method will be charged {{format-currency donationAmount}}
-    per month to support {{projectTitle}}.
-  {{else}}
-    No project selected.
-  {{/if}}
+<p class="payment-information">
+  Your payment method will be charged {{format-currency donationAmount}}
+  per month to support {{projectTitle}}.
 </p>
 
-{{#donation/credit-card canDonate=canDonate submit=createCreditCardAndDonate}}
+{{#donation/credit-card submit=donate}}
   {{!can be used to show errors}}
   {{yield}}
 {{/donation/credit-card}}

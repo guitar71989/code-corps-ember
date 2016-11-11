@@ -20,8 +20,6 @@ export default Component.extend({
    */
   stripe: service(),
 
-  cannotDonate: not('canDonate'),
-
   cardInvalid: not('cardValid'),
   cardValid: and('isCardNumberValid', 'isCVCValid', 'isExpiryValid'),
 
