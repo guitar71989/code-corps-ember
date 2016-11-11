@@ -1,4 +1,4 @@
-import { clickable, fillable, property, selectable } from 'ember-cli-page-object';
+import { clickable, fillable, is, property, selectable } from 'ember-cli-page-object';
 
 export default {
   scope: '.credit-card-form',
@@ -10,5 +10,7 @@ export default {
   cardYear: selectable('select.year'),
   cardCVC: fillable('[name=card-cvc]'),
 
-  clickSubmit: clickable('button')
+  clickSubmit: clickable('button'),
+
+  submitDisabled: is(':disabled', 'button')
 };

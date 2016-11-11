@@ -49,8 +49,8 @@
 {{yield}}
 
 <button
-  class="button {{if canSubmit "default" "clear"}}"
-  disabled={{cannotSubmit}}
-  {{action (action submit (hash cvc=cvc cardNumber=cardNumber month=month year=year))}}>
+  class="button {{if preventSubmit "clear" "default"}}"
+  disabled={{preventSubmit}}
+  {{action "submit"}}>
   Donate
 </button>

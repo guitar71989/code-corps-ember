@@ -48,7 +48,7 @@ test('inputs are enabled by default', function(assert) {
 });
 
 test('it sends submit with credit card fields when button is clicked', function(assert) {
-  assert.expect(1);
+  assert.expect(2);
 
   this.set('canDonate', true);
 
@@ -79,4 +79,6 @@ test('it sends submit with credit card fields when button is clicked', function(
       .cardYear(expectedProps.year)
       .cardCVC(expectedProps.cvc)
       .clickSubmit();
+
+  assert.ok(page.submitDisabled, 'Submit button got disabled.');
 });

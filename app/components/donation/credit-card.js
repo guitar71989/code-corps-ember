@@ -3,7 +3,7 @@ import Ember from 'ember';
 const {
   Component,
   computed,
-  computed: { and, not },
+  computed: { and, not, or },
   inject: { service }
 } = Ember;
 
@@ -22,9 +22,12 @@ export default Component.extend({
 
   cannotDonate: not('canDonate'),
 
-  cannotSubmit: not('canSubmit'),
+  cardInvalid: not('cardValid'),
+  cardValid: and('isCardNumberValid', 'isCVCValid', 'isExpiryValid'),
 
-  canSubmit: and('isCardValid', 'isCVCValid', 'isExpiryValid'),
+  preventSubmit: or('submitted', 'cardInvalid'),
+
+  submitted: false,
 
   date: computed('month', 'year', function() {
     let month = this.get('month');
@@ -32,7 +35,7 @@ export default Component.extend({
     return `${month} ${year}`;
   }),
 
-  isCardValid: computed('cardNumber', function() {
+  isCardNumberValid: computed('cardNumber', function() {
     let stripe = this.get('stripe');
     let cardNumber = this.get('cardNumber');
     return stripe.card.validateCardNumber(cardNumber);
@@ -68,5 +71,15 @@ export default Component.extend({
       years.push(currentYear++);
     }
     return years;
+  },
+
+  actions: {
+    submit() {
+      this.set('submitted', true);
+      let cardAttrs = this.getProperties('cvc', 'cardNumber', 'year', 'month');
+      let onSubmit = this.get('submit');
+
+      onSubmit(cardAttrs);
+    }
   }
 });
