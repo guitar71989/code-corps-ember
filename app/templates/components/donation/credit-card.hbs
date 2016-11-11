@@ -45,6 +45,9 @@
   </div>
 </div>
 
+{{!validation errors can be passed in from parent, using a block}}
+{{yield}}
+
 <button
   class="button {{if canSubmit "default" "clear"}}"
   disabled={{cannotSubmit}}

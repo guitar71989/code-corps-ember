@@ -3,8 +3,7 @@ import Ember from 'ember';
 const {
   Controller,
   computed: { alias },
-  inject: { service },
-  RSVP
+  inject: { service }
 } = Ember;
 
 export default Controller.extend({
@@ -50,27 +49,7 @@ export default Controller.extend({
   },
 
   _handleError(response) {
-    if (response.isAdapterError) {
-      return this._handleSubscriptionErrors(response);
-    } else if (response.error.type === "card_error") {
-      return this._handleStripeError(response);
-    } else {
-      // Rethrow if error type is not handled
-      return RSVP.reject(response);
-    }
-  },
-
-  _handleStripeError(response) {
-    this.set('stripeError', response);
-  },
-
-  _handleSubscriptionErrors(response) {
-    let { errors, status } = response;
-    let payloadContainsValidationErrors = errors.some(() => status === 422);
-
-    if (!payloadContainsValidationErrors) {
-      this.set('subscriptionValidationErrors', response);
-    }
+    this.set('error', response);
   },
 
   _stripeCardFromParams(cardParams) {
@@ -80,5 +59,5 @@ export default Controller.extend({
       exp_month: cardParams.month,
       exp_year: cardParams.year
     };
-  },
+  }
 });

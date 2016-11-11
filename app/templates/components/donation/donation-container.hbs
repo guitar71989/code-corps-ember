@@ -15,7 +15,10 @@
   {{/if}}
 </p>
 
-{{donation/credit-card canDonate=canDonate submit=createCreditCardAndDonate}}
+{{#donation/credit-card canDonate=canDonate submit=createCreditCardAndDonate}}
+  {{!can be used to show errors}}
+  {{yield}}
+{{/donation/credit-card}}
 
 <footer>
   <p class="additional-content">

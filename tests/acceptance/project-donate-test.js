@@ -94,14 +94,12 @@ test('Allows adding a card and donating (creating a subscription)', function(ass
     assert.ok(subscription, 'Subscription was created sucessfully.');
     assert.equal(subscription.userId, user.id, 'User was set to current user.');
     assert.equal(subscription.projectId, project.id, 'Project was set to current project.');
-    assert.equal(currentRouteName(), 'project.thankyou');
+    assert.equal(currentRouteName(), 'project.thankyou', 'User was redirected to the thank you route.');
   });
-
-  // TODO: Add assertions to check whatever needs to happen on success happens
 });
 
 test('Shows stripe errors when creating card token fails', function(assert) {
-  assert.expect(2);
+  assert.expect(4);
 
   stubStripe(this, stripeMockFailure);
 
@@ -131,12 +129,13 @@ test('Shows stripe errors when creating card token fails', function(assert) {
   andThen(() => {
     assert.notOk(server.schema.stripeSubscriptions.findBy({ amount: 1000 }), 'Subscription was not created.');
     assert.equal(currentRouteName(), 'project.donate');
-    // TODO: Assert errors are visible
+    assert.equal(projectDonatePage.errorFormatter.errors().count, 1, 'Correct number of errors is displayed.');
+    assert.equal(projectDonatePage.errorFormatter.errors(0).message, stripeCardError.error.message, 'Correct error is displayed.');
   });
 });
 
 test('Shows validation errors when creating subscription fails', function(assert) {
-  assert.expect(2);
+  assert.expect(4);
 
   stubStripe(this, stripeMockSuccess);
 
@@ -147,7 +146,7 @@ test('Shows validation errors when creating subscription fails', function(assert
   let project = server.create('project', { organization });
 
   projectDonatePage.visit({
-    amount: 10,
+    amount: 0,
     organization: organization.slug,
     project: project.slug
   });
@@ -165,12 +164,12 @@ test('Shows validation errors when creating subscription fails', function(assert
     server.post('/stripe-subscriptions', function() {
       done();
       return new Mirage.Response(422, {}, {
-        errors: [ {
+        errors: [{
           id: 'VALIDATION_ERROR',
           source: { pointer: 'data/attributes/amount' },
-          detail: "can't be blank",
+          detail: 'is invalid',
           status: 422
-        } ]
+        }]
       });
     });
     projectDonatePage.creditCard.clickSubmit();
@@ -179,7 +178,8 @@ test('Shows validation errors when creating subscription fails', function(assert
   andThen(() => {
     assert.notOk(server.schema.stripeSubscriptions.findBy({ amount: 1000 }), 'Subscription was not created.');
     assert.equal(currentRouteName(), 'project.donate');
-    // TODO: Assert errors are visible
+    assert.equal(projectDonatePage.errorFormatter.errors().count, 1, 'Correct number of errors is displayed.');
+    assert.equal(projectDonatePage.errorFormatter.errors(0).message, 'Amount is invalid', 'Correct error is displayed.');
   });
 });
 
